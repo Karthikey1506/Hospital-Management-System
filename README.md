@@ -4,6 +4,43 @@ A production-ready, full-stack Hospital Management System built with **React 18*
 
 ---
 
+## 📽️ 2–3 Minute Demo Video Walkthrough Guide
+
+Follow this structured flow when recording a demo video for recruiters or stakeholders (using Loom, OBS Studio, or Windows Game Bar `Win + G`):
+
+| Time | Scene | Action / Features Highlighted |
+|---|---|---|
+| **0:00 - 0:35** | **Login & Role-Based Access (RBAC)** | Start at `http://localhost:5173/`. Click Admin, Doctor, and Receptionist quick-swapper buttons in the top navbar to demonstrate JWT session switching and role permissions. |
+| **0:35 - 1:10** | **Executive Dashboard Telemetry** | Show the Command Center KPI cards (Occupancy %, Revenue in ₹, Active Inpatients), interactive Recharts Revenue trend curve, Department load bar graph, and real-time clinical stream. |
+| **1:10 - 1:45** | **Patient EMR & Document Upload** | Navigate to **Patient EMR**. Open Arjun Mehta's profile to view vitals and history. Click **Upload** to attach a PDF lab report using **Multer**. Demonstrate server-side pagination controls. |
+| **1:45 - 2:15** | **Appointment Booking & Bed Grid** | Navigate to **Appointments**, click **+ Book Appointment**, select doctor `Dr. Rajesh Varma`, date, and time slot. Check **Bed & Ward Grid** for ICU/Suite occupancy. |
+| **2:15 - 2:45** | **Financial Billing & System Audit Logs** | Go to **Billing & Invoices**, click **+ Generate Invoice**, create an itemized bill, and click **PDF Invoice** to download the official receipt formatted in **Rs. (INR)**. Open **System Audit Logs** to show the security ledger. |
+| **2:45 - 3:00** | **Architecture & API Documentation** | Open `http://localhost:5000/api-docs` to highlight the interactive OpenAPI 3.0 Swagger specifications. |
+
+---
+
+## 🏗️ System Architecture & Data Flow
+
+```mermaid
+graph TD
+    User([User / Browser]) <-->|React 18 + Vite UI| Client[Frontend Client Application]
+    Client <-->|REST APIs / JWT Token| Express[Node.js + Express API Server]
+    
+    subgraph Backend Core Engine
+        Express -->|Validation & Auth| RBAC[JWT & Role Middleware]
+        Express -->|File Uploads| Multer[Multer Disk Storage /uploads]
+        Express -->|SQL Query| DB[(Prisma SQL Relational Database)]
+        Express -->|Trigger| Mailer[Email Dispatch Utility]
+        Express -->|Security Interceptor| Audit[Audit Logging Engine]
+        Express -->|OpenAPI Specs| Swagger[Swagger / OpenAPI 3.0]
+    end
+
+    Multer -->|Serve Static Files| Web[Public Uploads /uploads/lab-reports]
+    Audit -->|Read Ledger| AuditUI[Audit Logs View]
+```
+
+---
+
 ## 🌟 Key Enterprise Features
 
 1. **📁 Multer Medical File Upload System**:
