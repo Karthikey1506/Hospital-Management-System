@@ -1,5 +1,9 @@
 # MedPulse Enterprise Hospital Management System 🏥🇮🇳
 
+<p align="center">
+  <img src="docs/demo.svg" alt="MedPulse Hospital Management System Video Demo" width="100%" />
+</p>
+
 A production-ready, full-stack Hospital Management System built with **React 18**, **Vite**, **Node.js + Express REST APIs**, **Prisma ORM & SQL Relational Database Engine**, **JWT Authentication with Role-Based Access Control (RBAC)**, **Multer Medical File Uploads**, **System Audit Logging**, **Automated Email Dispatch**, **Recharts Clinical Telemetry**, **PDF Invoicing (INR ₹)**, **OpenAPI 3.0 Documentation**, and an **Automated Unit Test Suite**.
 
 ---

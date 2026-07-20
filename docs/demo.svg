@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070a12" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#111827" />
+    </linearGradient>
+
+    <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F2FE" />
+      <stop offset="100%" stop-color="#4FACFE" />
+    </linearGradient>
+
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(18, 24, 40, 0.9)" />
+      <stop offset="100%" stop-color="rgba(28, 36, 58, 0.7)" />
+    </linearGradient>
+
+    <!-- Glowing Animations -->
+    <style>
+      .pulse-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dash 4s linear infinite; }
+      .fade-frame1 { animation: cycleFrame 12s infinite; }
+      .fade-frame2 { animation: cycleFrame2 12s infinite; }
+      .glowing-dot { animation: pulse 2s infinite; }
+
+      @keyframes dash {
+        to { stroke-dashoffset: 0; }
+      }
+      @keyframes pulse {
+        0% { opacity: 0.4; transform: scale(0.98); }
+        50% { opacity: 1; transform: scale(1.02); }
+        100% { opacity: 0.4; transform: scale(0.98); }
+      }
+    </style>
+  </defs>
+
+  <!-- Video Container Canvas -->
+  <rect width="1200" height="675" rx="16" fill="url(#bg-grad)" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+
+  <!-- Video Header Bar -->
+  <rect x="0" y="0" width="1200" height="50" fill="rgba(11, 15, 25, 0.9)" />
+  <circle cx="30" cy="25" r="7" fill="#EF4444" />
+  <circle cx="50" cy="25" r="7" fill="#F59E0B" />
+  <circle cx="70" cy="25" r="7" fill="#10B981" />
+  <text x="600" y="32" fill="#94A3B8" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">
+    ▶ MedPulse Care Enterprise — Full-Stack Interactive Video Demo (02:30)
+  </text>
+
+  <!-- Sidebar Mockup -->
+  <rect x="20" y="70" width="220" height="580" rx="12" fill="url(#card-grad)" stroke="rgba(255,255,255,0.08)" />
+  <text x="40" y="110" fill="#00F2FE" font-family="sans-serif" font-size="18" font-weight="bold">MedPulse Care</text>
+  <text x="40" y="130" fill="#64748B" font-family="sans-serif" font-size="11">ENTERPRISE SYSTEM</text>
+
+  <!-- Sidebar Items -->
+  <rect x="35" y="160" width="190" height="38" rx="8" fill="rgba(0, 242, 254, 0.15)" stroke="#00F2FE" stroke-width="1"/>
+  <text x="65" y="184" fill="#00F2FE" font-family="sans-serif" font-size="13" font-weight="bold">📊 Dashboard</text>
+
+  <text x="65" y="234" fill="#94A3B8" font-family="sans-serif" font-size="13">👥 Patient EMR</text>
+  <text x="65" y="284" fill="#94A3B8" font-family="sans-serif" font-size="13">👨‍⚕️ Doctors Roster</text>
+  <text x="65" y="334" fill="#94A3B8" font-family="sans-serif" font-size="13">📅 Appointments</text>
+  <text x="65" y="384" fill="#94A3B8" font-family="sans-serif" font-size="13">🛏️ Bed &amp; Ward Grid</text>
+  <text x="65" y="434" fill="#94A3B8" font-family="sans-serif" font-size="13">💊 Pharmacy &amp; Stock</text>
+  <text x="65" y="484" fill="#94A3B8" font-family="sans-serif" font-size="13">🧪 Lab Diagnostics</text>
+  <text x="65" y="534" fill="#94A3B8" font-family="sans-serif" font-size="13">🧾 Billing (INR ₹)</text>
+  <text x="65" y="584" fill="#94A3B8" font-family="sans-serif" font-size="13">🛡️ Audit Logs</text>
+
+  <!-- Main Dashboard Content View -->
+  <g class="fade-frame1">
+    <!-- Top Header Bar -->
+    <text x="260" y="105" fill="#F1F5F9" font-family="sans-serif" font-size="24" font-weight="800">Hospital Command Center</text>
+    <text x="260" y="128" fill="#94A3B8" font-family="sans-serif" font-size="13">Real-time clinical telemetry, occupancy analytics, &amp; revenue trends</text>
+
+    <!-- Role Badges Right -->
+    <rect x="920" y="85" width="240" height="40" rx="10" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" />
+    <rect x="925" y="90" width="70" height="30" rx="6" fill="#00F2FE" />
+    <text x="960" y="110" fill="#070a12" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">Admin</text>
+    <text x="1030" y="110" fill="#94A3B8" font-family="sans-serif" font-size="11" text-anchor="middle">Doctor</text>
+    <text x="1110" y="110" fill="#94A3B8" font-family="sans-serif" font-size="11" text-anchor="middle">Receptionist</text>
+
+    <!-- KPI Cards Row -->
+    <!-- Card 1 -->
+    <rect x="260" y="160" width="210" height="110" rx="12" fill="url(#card-grad)" stroke="rgba(255,255,255,0.08)" />
+    <text x="280" y="190" fill="#94A3B8" font-family="sans-serif" font-size="12">Total Revenue</text>
+    <text x="280" y="225" fill="#10B981" font-family="sans-serif" font-size="26" font-weight="800">₹4,26,400</text>
+    <text x="280" y="250" fill="#10B981" font-family="sans-serif" font-size="11">+18.4% Paid Invoices</text>
+
+    <!-- Card 2 -->
+    <rect x="490" y="160" width="210" height="110" rx="12" fill="url(#card-grad)" stroke="rgba(255,255,255,0.08)" />
+    <text x="510" y="190" fill="#94A3B8" font-family="sans-serif" font-size="12">ICU / Bed Occupancy</text>
+    <text x="510" y="225" fill="#00F2FE" font-family="sans-serif" font-size="26" font-weight="800">78%</text>
+    <text x="510" y="250" fill="#00F2FE" font-family="sans-serif" font-size="11">7/9 Beds Occupied</text>
+
+    <!-- Card 3 -->
+    <rect x="720" y="160" width="210" height="110" rx="12" fill="url(#card-grad)" stroke="rgba(255,255,255,0.08)" />
+    <text x="740" y="190" fill="#94A3B8" font-family="sans-serif" font-size="12">Active Inpatients</text>
+    <text x="740" y="225" fill="#8B5CF6" font-family="sans-serif" font-size="26" font-weight="800">42</text>
+    <text x="740" y="250" fill="#8B5CF6" font-family="sans-serif" font-size="11">EMR Registered</text>
+
+    <!-- Card 4 -->
+    <rect x="950" y="160" width="210" height="110" rx="12" fill="url(#card-grad)" stroke="rgba(255,255,255,0.08)" />
+    <text x="970" y="190" fill="#94A3B8" font-family="sans-serif" font-size="12">Appointment Rate</text>
+    <text x="970" y="225" fill="#F59E0B" font-family="sans-serif" font-size="26" font-weight="800">92%</text>
+    <text x="970" y="250" fill="#F59E0B" font-family="sans-serif" font-size="11">Completed Today</text>
+
+    <!-- Revenue Trend Chart Graphic -->
+    <rect x="260" y="290" width="580" height="230" rx="12" fill="url(#card-grad)" stroke="rgba(255,255,255,0.08)" />
+    <text x="280" y="320" fill="#F1F5F9" font-family="sans-serif" font-size="16" font-weight="bold">Revenue &amp; Billing Trend (₹)</text>
+
+    <!-- Chart Curve -->
+    <path d="M 300 480 Q 380 430, 460 410 T 620 370 T 780 340" fill="none" stroke="#00F2FE" stroke-width="4" class="pulse-line" />
+    <path d="M 300 480 Q 380 430, 460 410 T 620 370 T 780 340 L 780 490 L 300 490 Z" fill="rgba(0, 242, 254, 0.1)" />
+
+    <!-- Department Load Bar Chart Graphic -->
+    <rect x="860" y="290" width="300" height="230" rx="12" fill="url(#card-grad)" stroke="rgba(255,255,255,0.08)" />
+    <text x="880" y="320" fill="#F1F5F9" font-family="sans-serif" font-size="16" font-weight="bold">Department Load</text>
+
+    <rect x="880" y="440" width="35" height="50" rx="4" fill="#00F2FE"/>
+    <rect x="930" y="400" width="35" height="90" rx="4" fill="#8B5CF6"/>
+    <rect x="980" y="360" width="35" height="130" rx="4" fill="#10B981"/>
+    <rect x="1030" y="380" width="35" height="110" rx="4" fill="#EF4444"/>
+    <rect x="1080" y="420" width="35" height="70" rx="4" fill="#F59E0B"/>
+
+    <!-- Bottom Real-time Stream -->
+    <rect x="260" y="540" width="900" height="110" rx="12" fill="url(#card-grad)" stroke="rgba(255,255,255,0.08)" />
+    <text x="280" y="570" fill="#F1F5F9" font-family="sans-serif" font-size="15" font-weight="bold">Real-time Clinical Activity Stream</text>
+    <text x="280" y="600" fill="#6EE7B7" font-family="sans-serif" font-size="13">• Emergency Triage: Arjun Mehta (PT-1001) admitted to ICU Bed 101</text>
+    <text x="280" y="625" fill="#93C5FD" font-family="sans-serif" font-size="13">• Prescription: Dr. Rajesh Varma issued RX-7701 | Invoice INV-2026-001 (₹11,000) PAID</text>
+  </g>
+</svg>
