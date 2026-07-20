@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MedPulse Care Enterprise Hospital Management API",
+    "description": "REST API specification for EMR Patient Records, Doctor Roster, Appointments, Ward Bed Allocation, Pharmacy, Lab Diagnostics, Billing, Audit Logs, and File Uploads.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Authenticate user & issue JWT token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "admin@hospital.com" },
+                  "password": { "type": "string", "example": "admin123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful, returns JWT token and user role." },
+          "401": { "description": "Invalid credentials." }
+        }
+      }
+    },
+    "/patients": {
+      "get": {
+        "summary": "List EMR Patients with pagination & search",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "triageLevel", "in": "query", "schema": { "type": "string", "enum": ["RED", "YELLOW", "GREEN"] } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated list of patient records." }
+        }
+      },
+      "post": {
+        "summary": "Register a new EMR Patient",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "example": "Aarav Sharma" },
+                  "age": { "type": "integer", "example": 34 },
+                  "gender": { "type": "string", "example": "Male" },
+                  "bloodGroup": { "type": "string", "example": "O+" },
+                  "phone": { "type": "string", "example": "+91 98765 43210" },
+                  "triageLevel": { "type": "string", "example": "GREEN" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Patient registered successfully." }
+        }
+      }
+    },
+    "/upload/lab-report": {
+      "post": {
+        "summary": "Upload Lab Report PDF or Scan image (Multer)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string", "format": "binary" },
+                  "patientId": { "type": "string" },
+                  "labTestId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "File uploaded and linked successfully." }
+        }
+      }
+    },
+    "/audit-logs": {
+      "get": {
+        "summary": "Retrieve System Audit Logs (Admin/Doctor)",
+        "responses": {
+          "200": { "description": "Chronological audit log events." }
+        }
+      }
+    },
+    "/analytics": {
+      "get": {
+        "summary": "Retrieve Executive Clinical Analytics & Revenue Telemetry",
+        "responses": {
+          "200": { "description": "Occupancy, revenue trends, and department counts." }
+        }
+      }
+    }
+  }
+}

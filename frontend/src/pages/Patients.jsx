@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { exportToCSV } from '../utils/exportUtils';
-import { Search, Plus, Download, Eye, Trash2, HeartPulse, ShieldAlert, FileText, User } from 'lucide-react';
+import Pagination from '../components/Pagination';
+import FileUploadModal from '../components/FileUploadModal';
+import { Search, Plus, Download, Eye, Trash2, ShieldAlert, Upload, FileText, ExternalLink } from 'lucide-react';
 
 export default function Patients() {
   const [patients, setPatients] = useState([]);
   const [search, setSearch] = useState('');
   const [filterTriage, setFilterTriage] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  
+
   // Selected Patient for EMR Detail View
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+  // File Upload State
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadTargetPatient, setUploadTargetPatient] = useState(null);
 
   // New Patient Form state
   const [showNewModal, setShowNewModal] = useState(false);
@@ -21,15 +29,25 @@ export default function Patients() {
 
   const loadPatients = () => {
     setLoading(true);
-    api.getPatients({ search, triageLevel: filterTriage })
-      .then(res => setPatients(res))
+    fetch(`/api/patients?page=${page}&limit=7&search=${search}&triageLevel=${filterTriage}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('medpulse_token')}` }
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.data) {
+          setPatients(res.data);
+          setTotalPages(res.pagination.totalPages);
+        } else {
+          setPatients(res);
+        }
+      })
       .catch(err => console.error('Error loading patients:', err))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
     loadPatients();
-  }, [search, filterTriage]);
+  }, [page, search, filterTriage]);
 
   const handleCreatePatient = async (e) => {
     e.preventDefault();
@@ -54,7 +72,7 @@ export default function Patients() {
   };
 
   const handleDeletePatient = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this patient record? (Admin only)')) return;
+    if (!window.confirm('Are you sure you want to archive this patient record? (Admin only)')) return;
     try {
       await api.deletePatient(id);
       loadPatients();
@@ -97,14 +115,14 @@ export default function Patients() {
             className="input-field" 
             style={{ paddingLeft: '40px' }}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           />
         </div>
         <select 
           className="input-field" 
           style={{ width: '180px' }}
           value={filterTriage}
-          onChange={(e) => setFilterTriage(e.target.value)}
+          onChange={(e) => { setFilterTriage(e.target.value); setPage(1); }}
         >
           <option value="">All Triage Levels</option>
           <option value="RED">RED (Critical)</option>
@@ -118,52 +136,58 @@ export default function Patients() {
         {loading ? (
           <div style={{ padding: '40px', textAlign: 'center', color: 'var(--primary-cyan)' }}>Loading Clinical Records...</div>
         ) : (
-          <table className="custom-table">
-            <thead>
-              <tr>
-                <th>Patient ID</th>
-                <th>Patient Name</th>
-                <th>Age / Gender</th>
-                <th>Blood Group</th>
-                <th>Triage Priority</th>
-                <th>Clinical Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {patients.length === 0 ? (
-                <tr><td colSpan="7" style={{ textAlign: 'center', padding: '30px' }}>No patient records found.</td></tr>
-              ) : (
-                patients.map(pt => (
-                  <tr key={pt.id}>
-                    <td style={{ fontWeight: 700, color: 'var(--primary-cyan)' }}>{pt.patientId}</td>
-                    <td>
-                      <div style={{ fontWeight: 600 }}>{pt.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{pt.phone}</div>
-                    </td>
-                    <td>{pt.age} yrs • {pt.gender}</td>
-                    <td><span className="badge badge-purple">{pt.bloodGroup}</span></td>
-                    <td>{getTriageBadge(pt.triageLevel)}</td>
-                    <td>
-                      <span className={`badge ${pt.status === 'Admitted' ? 'badge-red' : 'badge-blue'}`}>
-                        {pt.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button className="btn-secondary" style={{ padding: '6px 10px' }} onClick={() => handleViewPatient(pt.id)}>
-                          <Eye size={14} /> EMR Profile
-                        </button>
-                        <button className="btn-secondary" style={{ padding: '6px 10px', color: '#EF4444' }} onClick={() => handleDeletePatient(pt.id)}>
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          <>
+            <table className="custom-table">
+              <thead>
+                <tr>
+                  <th>Patient ID</th>
+                  <th>Patient Name</th>
+                  <th>Age / Gender</th>
+                  <th>Blood Group</th>
+                  <th>Triage Priority</th>
+                  <th>Clinical Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patients.length === 0 ? (
+                  <tr><td colSpan="7" style={{ textAlign: 'center', padding: '30px' }}>No patient records found.</td></tr>
+                ) : (
+                  patients.map(pt => (
+                    <tr key={pt.id}>
+                      <td style={{ fontWeight: 700, color: 'var(--primary-cyan)' }}>{pt.patientId}</td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{pt.name}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{pt.phone}</div>
+                      </td>
+                      <td>{pt.age} yrs • {pt.gender}</td>
+                      <td><span className="badge badge-purple">{pt.bloodGroup}</span></td>
+                      <td>{getTriageBadge(pt.triageLevel)}</td>
+                      <td>
+                        <span className={`badge ${pt.status === 'Admitted' ? 'badge-red' : 'badge-blue'}`}>
+                          {pt.status}
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button className="btn-secondary" style={{ padding: '6px 10px' }} onClick={() => handleViewPatient(pt.id)}>
+                            <Eye size={14} /> Profile
+                          </button>
+                          <button className="btn-secondary" style={{ padding: '6px 10px', color: 'var(--primary-cyan)' }} onClick={() => { setUploadTargetPatient(pt); setShowUploadModal(true); }}>
+                            <Upload size={14} /> Upload
+                          </button>
+                          <button className="btn-secondary" style={{ padding: '6px 10px', color: '#EF4444' }} onClick={() => handleDeletePatient(pt.id)}>
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          </>
         )}
       </div>
 
@@ -209,18 +233,39 @@ export default function Patients() {
               ))
             ) : <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '16px' }}>No active prescriptions.</p>}
 
-            {/* Lab Reports */}
-            <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '10px', color: 'var(--accent-emerald)' }}>Lab Diagnostic Results</h4>
+            {/* Lab Reports & Documents */}
+            <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '10px', color: 'var(--accent-emerald)' }}>Lab Diagnostic Results & Scans</h4>
             {selectedPatient.labTests && selectedPatient.labTests.length > 0 ? (
               selectedPatient.labTests.map(lab => (
                 <div key={lab.id} style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '12px', borderRadius: '10px', marginBottom: '10px' }}>
-                  <div style={{ fontWeight: 700 }}>{lab.testName} ({lab.testCode})</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 700 }}>{lab.testName} ({lab.testCode})</div>
+                    {lab.reportFileUrl && (
+                      <a href={lab.reportFileUrl} target="_blank" rel="noreferrer" className="btn-secondary" style={{ padding: '4px 8px', fontSize: '0.75rem', color: 'var(--primary-cyan)' }}>
+                        <ExternalLink size={12} /> View Report PDF/Scan
+                      </a>
+                    )}
+                  </div>
                   <div style={{ fontSize: '0.85rem', marginTop: '4px' }}>Result: {lab.result}</div>
                 </div>
               ))
             ) : <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>No lab test records.</p>}
           </div>
         </div>
+      )}
+
+      {/* File Upload Modal (Multer) */}
+      {showUploadModal && uploadTargetPatient && (
+        <FileUploadModal 
+          title={`Upload Medical Document for ${uploadTargetPatient.name}`}
+          endpoint="/upload/lab-report"
+          extraData={{ patientId: uploadTargetPatient.id }}
+          onClose={() => setShowUploadModal(false)}
+          onSuccess={(res) => {
+            alert(`File ${res.originalName} uploaded successfully!`);
+            loadPatients();
+          }}
+        />
       )}
 
       {/* New Patient Registration Modal */}
@@ -252,7 +297,7 @@ export default function Patients() {
                 </div>
               </div>
               <div>
-                <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Phone Number</label>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Phone Number (+91 format)</label>
                 <input type="text" required className="input-field" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
               </div>
               <div>

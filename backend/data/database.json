@@ -173,6 +173,28 @@
       "allergies": "Dust, Pollen",
       "medicalHistory": "Minor concussion (Resolved)",
       "assignedDoctorId": 3
+    },
+    {
+      "patientId": "PT-1005",
+      "name": "Test Patient",
+      "age": 30,
+      "gender": "Male",
+      "phone": "9876543210",
+      "triageLevel": "GREEN",
+      "status": "Outpatient",
+      "id": 5,
+      "createdAt": "2026-07-20T13:07:53.510Z"
+    },
+    {
+      "patientId": "PT-1006",
+      "name": "Test Patient",
+      "age": 30,
+      "gender": "Male",
+      "phone": "9876543210",
+      "triageLevel": "GREEN",
+      "status": "Outpatient",
+      "id": 6,
+      "createdAt": "2026-07-20T13:08:02.449Z"
     }
   ],
   "appointments": [
@@ -431,6 +453,30 @@
       "stockQuantity": 210,
       "unitPrice": 220,
       "expiryDate": "2027-04-10"
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": 2,
+      "timestamp": "2026-07-20T13:08:02.450Z",
+      "userId": 1,
+      "userName": "Dr. Ananya Sharma (Chief Director)",
+      "userRole": "ADMIN",
+      "action": "CREATE_PATIENT",
+      "entity": "Patients",
+      "details": "Registered new patient Test Patient (PT-1006)",
+      "ipAddress": "::1"
+    },
+    {
+      "id": 1,
+      "timestamp": "2026-07-20T13:07:53.513Z",
+      "userId": 1,
+      "userName": "Dr. Ananya Sharma (Chief Director)",
+      "userRole": "ADMIN",
+      "action": "CREATE_PATIENT",
+      "entity": "Patients",
+      "details": "Registered new patient Test Patient (PT-1005)",
+      "ipAddress": "::1"
     }
   ]
 }

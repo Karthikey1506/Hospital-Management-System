@@ -20,7 +20,8 @@ const initialData = {
   prescriptions: [],
   lab_tests: [],
   bills: [],
-  medicines: []
+  medicines: [],
+  audit_logs: []
 };
 
 function readDB() {
@@ -30,7 +31,9 @@ function readDB() {
       return initialData;
     }
     const content = fs.readFileSync(DB_PATH, 'utf-8');
-    return JSON.parse(content);
+    const parsed = JSON.parse(content);
+    if (!parsed.audit_logs) parsed.audit_logs = [];
+    return parsed;
   } catch (err) {
     console.error('Error reading DB:', err);
     return initialData;
@@ -91,6 +94,25 @@ const db = {
       return true;
     }
     return false;
+  },
+
+  logAudit: ({ userId, userName, userRole, action, entity, details, ipAddress }) => {
+    const data = readDB();
+    if (!data.audit_logs) data.audit_logs = [];
+    const logEntry = {
+      id: data.audit_logs.length + 1,
+      timestamp: new Date().toISOString(),
+      userId: userId || 'SYSTEM',
+      userName: userName || 'System Automated',
+      userRole: userRole || 'SYSTEM',
+      action,
+      entity,
+      details: details || '',
+      ipAddress: ipAddress || '127.0.0.1'
+    };
+    data.audit_logs.unshift(logEntry); // Newest first
+    writeDB(data);
+    return logEntry;
   },
 
   reset: (seedData) => {

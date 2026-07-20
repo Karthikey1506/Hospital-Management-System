@@ -12,9 +12,11 @@ import Pharmacy from './pages/Pharmacy';
 import Lab from './pages/Lab';
 import Billing from './pages/Billing';
 import Emergency from './pages/Emergency';
+import AuditLogs from './pages/AuditLogs';
 
 function MainApp() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { loading } = useAuth();
 
   if (loading) {
@@ -36,15 +38,21 @@ function MainApp() {
       case 'lab': return <Lab />;
       case 'billing': return <Billing />;
       case 'emergency': return <Emergency />;
+      case 'audit': return <AuditLogs />;
       default: return <Dashboard setActiveTab={setActiveTab} />;
     }
   };
 
   return (
     <div className="app-container">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        mobileOpen={mobileOpen} 
+        setMobileOpen={setMobileOpen} 
+      />
       <div className="main-content">
-        <Navbar />
+        <Navbar setMobileOpen={setMobileOpen} />
         <main className="page-body">
           {renderContent()}
         </main>

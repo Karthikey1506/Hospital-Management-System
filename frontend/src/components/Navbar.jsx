@@ -1,9 +1,9 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Activity, ShieldCheck, UserCheck, Stethoscope, ClipboardList, LogOut } from 'lucide-react';
+import { Activity, ShieldCheck, Stethoscope, ClipboardList, Menu } from 'lucide-react';
 
-export default function Navbar() {
-  const { user, demoLogin, logout } = useAuth();
+export default function Navbar({ setMobileOpen }) {
+  const { user, demoLogin } = useAuth();
 
   return (
     <header style={{
@@ -14,13 +14,21 @@ export default function Navbar() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '0 32px',
+      padding: '0 24px',
       position: 'sticky',
       top: 0,
       zIndex: 100
     }}>
-      {/* Brand & Triage indicator */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+      {/* Brand & Mobile Hamburger */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <button 
+          className="mobile-toggle-btn"
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'none' }}
+          onClick={() => setMobileOpen(prev => !prev)}
+        >
+          <Menu size={24} />
+        </button>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
             width: '38px',
@@ -43,26 +51,10 @@ export default function Navbar() {
             </span>
           </div>
         </div>
-
-        <div style={{
-          background: 'rgba(239, 68, 68, 0.12)',
-          border: '1px solid rgba(239, 68, 68, 0.25)',
-          padding: '4px 12px',
-          borderRadius: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          fontSize: '0.75rem',
-          color: '#FCA5A5'
-        }}>
-          <span className="pulse-dot red"></span>
-          Emergency Bay: ACTIVE (3 Beds Open)
-        </div>
       </div>
 
       {/* Role Switcher & User Profile */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        {/* Quick Role Swapper for recruiters/reviewers */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.04)',
           border: '1px solid var(--border-color)',
@@ -78,14 +70,13 @@ export default function Navbar() {
               color: user?.role === 'ADMIN' ? '#070a12' : 'var(--text-muted)',
               border: 'none',
               borderRadius: '8px',
-              padding: '6px 12px',
+              padding: '6px 10px',
               fontSize: '0.75rem',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.2s'
+              gap: '4px'
             }}
           >
             <ShieldCheck size={14} /> Admin
@@ -98,14 +89,13 @@ export default function Navbar() {
               color: user?.role === 'DOCTOR' ? '#070a12' : 'var(--text-muted)',
               border: 'none',
               borderRadius: '8px',
-              padding: '6px 12px',
+              padding: '6px 10px',
               fontSize: '0.75rem',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.2s'
+              gap: '4px'
             }}
           >
             <Stethoscope size={14} /> Doctor
@@ -118,21 +108,19 @@ export default function Navbar() {
               color: user?.role === 'RECEPTIONIST' ? '#070a12' : 'var(--text-muted)',
               border: 'none',
               borderRadius: '8px',
-              padding: '6px 12px',
+              padding: '6px 10px',
               fontSize: '0.75rem',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.2s'
+              gap: '4px'
             }}
           >
             <ClipboardList size={14} /> Receptionist
           </button>
         </div>
 
-        {/* User Badge */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
