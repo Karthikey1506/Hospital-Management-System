@@ -1,0 +1,300 @@
+const db = require('./db');
+
+const seedData = {
+  users: [
+    {
+      id: 1,
+      email: 'admin@hospital.com',
+      password: 'admin123',
+      name: 'Dr. Ananya Sharma (Chief Director)',
+      role: 'ADMIN'
+    },
+    {
+      id: 2,
+      email: 'doctor@hospital.com',
+      password: 'doctor123',
+      name: 'Dr. Rajesh Varma',
+      role: 'DOCTOR'
+    },
+    {
+      id: 3,
+      email: 'reception@hospital.com',
+      password: 'reception123',
+      name: 'Pooja Agarwal',
+      role: 'RECEPTIONIST'
+    }
+  ],
+  departments: [
+    { id: 1, name: 'Cardiology', code: 'CARD', head: 'Dr. Rajesh Varma', floor: '3rd Floor - Wing A' },
+    { id: 2, name: 'Neurology', code: 'NEUR', head: 'Dr. Kedar Kulkarni', floor: '4th Floor - Wing B' },
+    { id: 3, name: 'Pediatrics', code: 'PED', head: 'Dr. Priya Nair', floor: '2nd Floor - Wing C' },
+    { id: 4, name: 'Emergency & Triage', code: 'EMERG', head: 'Dr. Vikramaditya Rao', floor: '1st Floor - Main Bay' },
+    { id: 5, name: 'Orthopedics', code: 'ORTHO', head: 'Dr. Suresh Iyer', floor: '3rd Floor - Wing B' }
+  ],
+  doctors: [
+    {
+      id: 1,
+      userId: 2,
+      name: 'Dr. Rajesh Varma',
+      departmentId: 1,
+      specialization: 'Interventional Cardiology',
+      licenseNumber: 'MD-88492',
+      phone: '+91 98765 43210',
+      availability: 'Mon - Fri (09:00 - 17:00)',
+      onCall: true,
+      patientsCount: 42
+    },
+    {
+      id: 2,
+      userId: null,
+      name: 'Dr. Priya Nair',
+      departmentId: 3,
+      specialization: 'Pediatric Care & Immunology',
+      licenseNumber: 'MD-91204',
+      phone: '+91 98765 12345',
+      availability: 'Mon - Thu (10:00 - 18:00)',
+      onCall: false,
+      patientsCount: 28
+    },
+    {
+      id: 3,
+      userId: null,
+      name: 'Dr. Vikramaditya Rao',
+      departmentId: 4,
+      specialization: 'Emergency Trauma Surgery',
+      licenseNumber: 'MD-77319',
+      phone: '+91 98123 45678',
+      availability: '24/7 Shift Rotation',
+      onCall: true,
+      patientsCount: 65
+    },
+    {
+      id: 4,
+      userId: null,
+      name: 'Dr. Kedar Kulkarni',
+      departmentId: 2,
+      specialization: 'Neuro-Surgery & Stroke Specialist',
+      licenseNumber: 'MD-60193',
+      phone: '+91 98345 67890',
+      availability: 'Tue - Sat (08:00 - 16:00)',
+      onCall: false,
+      patientsCount: 31
+    }
+  ],
+  patients: [
+    {
+      id: 1,
+      patientId: 'PT-1001',
+      name: 'Arjun Mehta',
+      age: 45,
+      gender: 'Male',
+      bloodGroup: 'O+',
+      phone: '+91 98234 56789',
+      address: '742 Park Street, Indiranagar, Bengaluru',
+      emergencyContact: 'Sunita Mehta (+91 98234 56790)',
+      triageLevel: 'RED',
+      status: 'Admitted',
+      allergies: 'Penicillin, Latex',
+      medicalHistory: 'Hypertension, Acute Myocardial Infarction (2024)',
+      assignedDoctorId: 1
+    },
+    {
+      id: 2,
+      patientId: 'PT-1002',
+      name: 'Ananya Iyer',
+      age: 29,
+      gender: 'Female',
+      bloodGroup: 'A+',
+      phone: '+91 98456 78901',
+      address: '12 Marine Drive, Mumbai',
+      emergencyContact: 'Rohan Iyer (+91 98456 78902)',
+      triageLevel: 'GREEN',
+      status: 'Outpatient',
+      allergies: 'None',
+      medicalHistory: 'Seasonal asthma, Post-viral fatigue',
+      assignedDoctorId: 2
+    },
+    {
+      id: 3,
+      patientId: 'PT-1003',
+      name: 'Ramesh Patel',
+      age: 58,
+      gender: 'Male',
+      bloodGroup: 'AB-',
+      phone: '+91 98567 89012',
+      address: '99 Jubilee Hills, Hyderabad',
+      emergencyContact: 'Sarita Patel (+91 98567 89013)',
+      triageLevel: 'YELLOW',
+      status: 'Admitted',
+      allergies: 'Sulfa Drugs',
+      medicalHistory: 'Type 2 Diabetes, Chronic Lumbar Pain',
+      assignedDoctorId: 4
+    },
+    {
+      id: 4,
+      patientId: 'PT-1004',
+      name: 'Kavya Deshmukh',
+      age: 22,
+      gender: 'Female',
+      bloodGroup: 'B+',
+      phone: '+91 98678 90123',
+      address: '45 FC Road, Pune',
+      emergencyContact: 'Anita Deshmukh (+91 98678 90124)',
+      triageLevel: 'GREEN',
+      status: 'Discharged',
+      allergies: 'Dust, Pollen',
+      medicalHistory: 'Minor concussion (Resolved)',
+      assignedDoctorId: 3
+    }
+  ],
+  appointments: [
+    {
+      id: 1,
+      appointmentCode: 'APT-901',
+      patientId: 1,
+      doctorId: 1,
+      date: '2026-07-20',
+      timeSlot: '10:30 AM',
+      reason: 'Post-operative Cardiac Checkup',
+      priority: 'HIGH',
+      status: 'In-Consultation'
+    },
+    {
+      id: 2,
+      appointmentCode: 'APT-902',
+      patientId: 2,
+      doctorId: 2,
+      date: '2026-07-20',
+      timeSlot: '02:00 PM',
+      reason: 'Pediatric Immunity Assessment',
+      priority: 'NORMAL',
+      status: 'Waiting'
+    },
+    {
+      id: 3,
+      appointmentCode: 'APT-903',
+      patientId: 3,
+      doctorId: 4,
+      date: '2026-07-21',
+      timeSlot: '11:00 AM',
+      reason: 'MRI Spine Review',
+      priority: 'MEDIUM',
+      status: 'Confirmed'
+    }
+  ],
+  beds: [
+    { id: 1, bedNumber: 'ICU-101', wardType: 'ICU', status: 'OCCUPIED', patientId: 1, dailyRate: 2500 },
+    { id: 2, bedNumber: 'ICU-102', wardType: 'ICU', status: 'AVAILABLE', patientId: null, dailyRate: 2500 },
+    { id: 3, bedNumber: 'ICU-103', wardType: 'ICU', status: 'MAINTENANCE', patientId: null, dailyRate: 2500 },
+    { id: 4, bedNumber: 'STE-301', wardType: 'Private Suite', status: 'OCCUPIED', patientId: 3, dailyRate: 1850 },
+    { id: 5, bedNumber: 'STE-302', wardType: 'Private Suite', status: 'AVAILABLE', patientId: null, dailyRate: 1850 },
+    { id: 6, bedNumber: 'GEN-201', wardType: 'General Ward', status: 'AVAILABLE', patientId: null, dailyRate: 750 },
+    { id: 7, bedNumber: 'GEN-202', wardType: 'General Ward', status: 'AVAILABLE', patientId: null, dailyRate: 750 },
+    { id: 8, bedNumber: 'GEN-203', wardType: 'General Ward', status: 'CLEANING', patientId: null, dailyRate: 750 },
+    { id: 9, bedNumber: 'ER-01', wardType: 'Emergency Triage', status: 'AVAILABLE', patientId: null, dailyRate: 1000 }
+  ],
+  prescriptions: [
+    {
+      id: 1,
+      prescriptionId: 'RX-7701',
+      patientId: 1,
+      doctorId: 1,
+      diagnosis: 'Acute Coronary Artery Syndrome & Hypertension',
+      medicines: [
+        { name: 'Atorvastatin 40mg', dosage: '1 tablet nightly', duration: '30 Days' },
+        { name: 'Aspirin 75mg', dosage: '1 tablet morning', duration: '90 Days' },
+        { name: 'Metoprolol 50mg', dosage: '1 tablet twice daily', duration: '30 Days' }
+      ],
+      notes: 'Restrict sodium intake. Monitor BP daily at 09:00.'
+    },
+    {
+      id: 2,
+      prescriptionId: 'RX-7702',
+      patientId: 2,
+      doctorId: 2,
+      diagnosis: 'Post-Viral Airway Reactivity',
+      medicines: [
+        { name: 'Montelukast 10mg', dosage: '1 tablet at night', duration: '14 Days' },
+        { name: 'Albuterol Inhaler', dosage: '2 puffs as needed for wheezing', duration: 'As needed' }
+      ],
+      notes: 'Avoid cold exposure. Re-evaluate in 2 weeks.'
+    }
+  ],
+  lab_tests: [
+    {
+      id: 1,
+      testCode: 'LAB-401',
+      patientId: 1,
+      doctorId: 1,
+      testName: 'Full Cardiac Panel & Troponin I',
+      category: 'Blood Pathology',
+      cost: 2500,
+      status: 'Completed',
+      result: 'Troponin I: 0.02 ng/mL (Normal). Cholesterol: 185 mg/dL.'
+    },
+    {
+      id: 2,
+      testCode: 'LAB-402',
+      patientId: 3,
+      doctorId: 4,
+      testName: 'Lumbar Spine MRI with Contrast',
+      category: 'Radiology Imaging',
+      cost: 6500,
+      status: 'Pending',
+      result: 'Scheduled for 2026-07-21 09:00 AM'
+    }
+  ],
+  bills: [
+    {
+      id: 1,
+      invoiceNumber: 'INV-2026-001',
+      patientId: 1,
+      patientName: 'Arjun Mehta',
+      consultationFee: 500,
+      bedCharge: 7500, // 3 days in ICU
+      labCharge: 2500,
+      pharmacyCharge: 1500,
+      subtotal: 12000,
+      discount: 1000,
+      totalAmount: 11000,
+      insuranceClaimStatus: 'Approved (80% Covered)',
+      status: 'PAID',
+      paymentMethod: 'Insurance + Credit Card',
+      createdAt: '2026-07-20T10:00:00.000Z'
+    },
+    {
+      id: 2,
+      invoiceNumber: 'INV-2026-002',
+      patientId: 3,
+      patientName: 'Ramesh Patel',
+      consultationFee: 500,
+      bedCharge: 3700, // 2 days Suite
+      labCharge: 6500,
+      pharmacyCharge: 1200,
+      subtotal: 11900,
+      discount: 900,
+      totalAmount: 11000,
+      insuranceClaimStatus: 'Pending Verification',
+      status: 'PENDING',
+      paymentMethod: 'Pending',
+      createdAt: '2026-07-20T11:30:00.000Z'
+    }
+  ],
+  medicines: [
+    { id: 1, name: 'Atorvastatin 40mg', category: 'Cardiovascular', stockQuantity: 450, unitPrice: 150, expiryDate: '2027-12-31' },
+    { id: 2, name: 'Aspirin 75mg', category: 'Blood Thinner', stockQuantity: 1200, unitPrice: 50, expiryDate: '2028-06-30' },
+    { id: 3, name: 'Metoprolol 50mg', category: 'Beta Blocker', stockQuantity: 320, unitPrice: 120, expiryDate: '2027-09-15' },
+    { id: 4, name: 'Amoxicillin 500mg', category: 'Antibiotic', stockQuantity: 80, unitPrice: 180, expiryDate: '2026-11-20' },
+    { id: 5, name: 'Montelukast 10mg', category: 'Respiratory', stockQuantity: 210, unitPrice: 220, expiryDate: '2027-04-10' }
+  ]
+};
+
+function seedDatabase() {
+  console.log('Seeding MedPulse relational database with Indian clinical records...');
+  db.reset(seedData);
+  console.log('Database successfully seeded with Indian clinical data!');
+}
+
+seedDatabase();
+
+module.exports = seedDatabase;
