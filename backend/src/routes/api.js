@@ -9,17 +9,21 @@ const { sendAppointmentEmail, sendLabReportEmail } = require('../utils/mailer');
 
 const router = express.Router();
 
-// Helper for Audit Logging
+// Robust Helper for Audit Logging
 function recordAudit(req, action, entity, details) {
   try {
+    const user = req && req.user ? req.user : (req && req.userObj ? req.userObj : null);
+    const headers = req && req.headers ? req.headers : {};
+    const ipAddress = headers['x-forwarded-for'] || (req && req.ip) || '127.0.0.1';
+
     db.logAudit({
-      userId: req.user ? req.user.id : 'ANONYMOUS',
-      userName: req.user ? req.user.name : 'System User',
-      userRole: req.user ? req.user.role : 'GUEST',
+      userId: user ? user.id : 'ANONYMOUS',
+      userName: user ? user.name : 'System User',
+      userRole: user ? user.role : 'GUEST',
       action,
       entity,
       details,
-      ipAddress: req.ip || req.headers['x-forwarded-for'] || '127.0.0.1'
+      ipAddress
     });
   } catch (err) {
     console.error('Failed to log audit action:', err);
@@ -64,7 +68,8 @@ router.post('/auth/login', (req, res) => {
     { expiresIn: '24h' }
   );
 
-  recordAudit({ user }, 'USER_LOGIN', 'Auth', `User ${user.name} logged in with role ${user.role}`);
+  req.user = { id: user.id, email: user.email, name: user.name, role: user.role };
+  recordAudit(req, 'USER_LOGIN', 'Auth', `User ${user.name} logged in with role ${user.role}`);
 
   return res.json({
     message: 'Login successful',
@@ -268,7 +273,6 @@ router.post('/appointments', authenticateToken, requireRole(['ADMIN', 'RECEPTION
   };
   const created = db.insert('appointments', newAppointment);
 
-  // Trigger Email Dispatch Hook
   const pt = db.findById('patients', created.patientId);
   const doc = db.findById('doctors', created.doctorId);
 
@@ -444,7 +448,7 @@ router.post('/billing', authenticateToken, requireRole(['ADMIN', 'RECEPTIONIST']
     status: req.body.status || 'PENDING'
   };
 
-  const created = db.insert('billing', newBill);
+  const created = db.insert('bills', newBill);
   recordAudit(req, 'GENERATE_BILL', 'Billing', `Generated invoice ${created.invoiceNumber} for ₹${totalAmount}`);
 
   res.status(201).json(created);
